@@ -352,5 +352,8 @@ h1:before, h2:before, h3:before, h4:before {
 
 #logo {
     position: relative;
-    top: 22px;
+    top: 42px;
+}
+.logo {
+    top: -23px;
 }

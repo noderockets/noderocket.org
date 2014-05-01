@@ -8,61 +8,76 @@ function NodeRocketLogo(finder, height, theme) {
       wings: 'black',
       window: 'white'
     },
-    light: {
-      fuselage: 'rgb(68, 70, 58)',
-      wings: 'rgb(68, 70, 58)',
-      window: 'rgb(112, 189, 68)'
-    },
-    green: {
-    fuselage: 'rgb(68, 70, 58)',
-      wings: 'rgb(68, 70, 58)',
-      window: 'white'
-    },
     dark: {
       fuselage: 'white',
       wings: 'white',
       window: 'rgb(112, 189, 68)'
-    }
+    },
+    light: {
+      fuselage: 'rgb(68, 70, 58)',
+      wings: 'rgb(68, 70, 58)',
+      window: 'white'
+    },
+    green: {
+      fuselage: 'rgb(68, 70, 58)',
+      wings: 'rgb(68, 70, 58)',
+      window: 'rgb(112, 189, 68)'
+    },
+    dark_green: {
+      fuselage: 'black',
+      wings: 'black',
+      window: 'rgb(112, 189, 68)'
+    },
   }
 
+  var borderData = [
+    {x: 500, y: 43.5},
+    {x: 908, y: 281.5},
+    {x: 908, y: 715},
+    {x: 500, y: 953},
+    {x: 092, y: 715},
+    {x: 092, y: 281.5},
+    {x: 500, y: 43.5}
+  ]
+
   var fuselageData = [
-    {x: 500, y: 90},
-    {x: 620, y: 160},
-    {x: 620, y: 820},
-    {x: 553.33, y: 780},
-    {x: 553.33, y: 690},
-    {x: 500, y: 663.3},
-    {x: 446.66, y: 690},
-    {x: 446.66, y: 780},
-    {x: 380, y: 820},
-    {x: 380, y: 160},
-    {x: 500, y: 90}
+    {x: 500, y: 111.5},
+    {x: 602, y: 171},
+    {x: 602, y: 732},
+    {x: 545.33, y: 698},
+    {x: 545.33, y: 621.5},
+    {x: 500, y: 598.81},
+    {x: 454.66, y: 621.5},
+    {x: 454.66, y: 698},
+    {x: 398, y: 732},
+    {x: 398, y: 171},
+    {x: 500, y: 111.5}
   ];
 
   var rightWingData = [
-    {x: 660, y: 660},
-    {x: 780, y: 730},
-    {x: 780, y: 915},
-    {x: 660, y: 845},
-    {x: 660, y: 660}
+    {x: 636, y: 596},
+    {x: 738, y: 655.5},
+    {x: 738, y: 812.75},
+    {x: 636, y: 753.25},
+    {x: 636, y: 596}
   ];
 
   var leftWingData = [
-    {x: 340, y: 660},
-    {x: 220, y: 730},
-    {x: 220, y: 915},
-    {x: 340, y: 845},
-    {x: 340, y: 660}
+    {x: 364, y: 596},
+    {x: 262, y: 655.5},
+    {x: 262, y: 812.75},
+    {x: 364, y: 753.25},
+    {x: 364, y: 596}
   ];
 
   var windowData = [
-    {x: 500, y: 250},
-    {x: 560, y: 285},
-    {x: 560, y: 350},
-    {x: 500, y: 385},
-    {x: 440, y: 350},
-    {x: 440, y: 285},
-    {x: 500, y: 250}
+    {x: 500, y: 247.5},
+    {x: 551, y: 277.25},
+    {x: 551, y: 332.5},
+    {x: 500, y: 362.25},
+    {x: 449, y: 332.5},
+    {x: 449, y: 277.25},
+    {x: 500, y: 247.5}
   ]
 
   var SCALE = height / 1000;
@@ -71,6 +86,7 @@ function NodeRocketLogo(finder, height, theme) {
   var STROKE = 20 * SCALE;
   var THEME = THEMES[theme] || dark;
 
+  scale(borderData, SCALE, SCALE);
   scale(fuselageData, SCALE, SCALE);
   scale(rightWingData, SCALE, SCALE);
   scale(leftWingData, SCALE, SCALE);
@@ -87,6 +103,12 @@ function NodeRocketLogo(finder, height, theme) {
     .style("stroke-width", STROKE)
     .attr("width", WIDTH)
     .attr("height", HEIGHT);
+
+  var borderGraph = svg.append("path")
+    .style("stroke-width", STROKE * 3)
+    .attr("d", lineFunction(borderData))
+    .attr("stroke", THEME.fuselage)
+    .attr("fill", 'rgb(123, 123, 123)');
 
   var fuselageGraph = svg.append("path")
     .attr("d", lineFunction(fuselageData))
