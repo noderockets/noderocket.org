@@ -4,8 +4,12 @@
       <title><%= @document.title %></title>
       <link rel="stylesheet" media="screen" href="styles/default.css">
       <link rel="stylesheet" media="screen" href="styles/color.css">
+      <link rel="stylesheet" media="screen" href="styles/highlight_github.css">
       <script src="http://d3js.org/d3.v3.min.js"></script>
       <script src="/scripts/logo.js"></script>
+
+      <!-- livereload -->
+      <%- @getBlock('scripts').toHTML() %>
 </head>
   <body>
     <div id="header">
