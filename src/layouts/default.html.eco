@@ -15,7 +15,7 @@
     <div id="header">
       <p class="organizers">
         Brought to you by the
-        <a href="https://twitter.com/noderocket/following">@noderocket</a> core <a href="/core">team</a>
+        <a href="https://twitter.com/noderockets/following">@noderockets</a> core <a href="/core">team</a>
       </p>
       <a href="/">
         <span class="logo">node<span id="logo"></span>rockets</span>
