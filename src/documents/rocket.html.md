@@ -57,6 +57,10 @@ toward the tail.  Adding weight to the nose of the rocket moves the center of
  rocket, you'll want to adjust the size of the fins and/or the weight of the
  nose to improve your rockets in-flight handling.
 
+Since weight and drag will keep your rocket from reaching its full altitude
+potential, it is important to balance the size of the fins and weight of the
+rocket so you get a stable flight while still getting awesome altitude.
+
 
 Construction
 ------------
