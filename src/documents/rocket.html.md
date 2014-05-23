@@ -19,6 +19,45 @@ Of course, the simplest water rocket is a plain 2-liter bottle.  Even without
 To make our rocket really awesome, we add a payload with a Raspberry Pi,
 and an automated, altitude-aware, parachute.
 
+We'll briefly cover each of the pieces that make a good rocket to give you
+some ideas on where to start:
+
+- Engine
+- Fins
+- Nose Cone
+- Payload
+- Parachute
+
+### Rocket Physics
+
+Before we start building though, let's have a quick lesson on rocket physics.
+There are a couple concepts that we need to understand first:
+
+** Center of Mass **
+
+You can find the center of mass for your rocket by balancing it on your
+finger.  When the rocket is balanced, the point above your finger is the
+center of mass.
+
+** Center of Pressure **
+
+The center of pressure for your rocket is the point where all the aerodynamic
+ forces are focused during flight.  It's hard to determine where this is
+ without testing, but it's location is crucial to how your rocket will handle.
+
+In order for your rocket to be stable in flight, the center of pressure needs
+ to be closer to the tail of the rocket than the center of mass.  The further
+ the distance between the two, the more stable your rocket will be.  If the
+ center of pressure is closer to the nose of your rocket, your rocket will
+ probably tumble in flight.
+
+Adding fins to your rocket increases drag and moves the center of pressure
+toward the tail.  Adding weight to the nose of the rocket moves the center of
+ mass toward the nose.  Depending on the size and characteristics of your
+ rocket, you'll want to adjust the size of the fins and/or the weight of the
+ nose to improve your rockets in-flight handling.
+
+
 Construction
 ------------
 
@@ -36,7 +75,20 @@ The engine is the simplest part of the rocket to build.  All you need to build a
 
 ![two liter soda bottle](images/rocket/empty-2liter.png)
 
-After cleaning off the label and the sticky glue, you're ready to add fins.
+After cleaning off the label and the sticky glue, you're ready to add a
+nose cone and fins.
+
+### Nose Cone
+
+The simplest nose cone is the blunt end of a 2-liter bottle.  You can make a
+more aerodynamic cone simply by crafting one from craft paper or cardboard.
+
+Even better is a nose cone made from a plastic bottle.  You can cut the
+nozzle off the end of a bottle just below the neck and this makes a fairly
+good nose cone.  We've also used the end of a nerf football for a nose cone.
+
+Finally, you could use a 3D printer to make a nose cone with just the
+characteristics you want.
 
 ### Fins
 
