@@ -28,6 +28,7 @@ some ideas on where to start:
 - Payload
 - Parachute
 
+
 ### Rocket Physics
 
 Before we start building though, let's have a quick lesson on rocket physics.
@@ -72,6 +73,7 @@ Construction
 - (1) Package of sticky back velcro
 - (1) Roll of duct tape
 
+
 ### Engine
 
 The engine is the simplest part of the rocket to build.  All you need to build a single engine is one empty
@@ -81,6 +83,7 @@ The engine is the simplest part of the rocket to build.  All you need to build a
 
 After cleaning off the label and the sticky glue, you're ready to add a
 nose cone and fins.
+
 
 ### Nose Cone
 
@@ -93,6 +96,7 @@ good nose cone.  We've also used the end of a nerf football for a nose cone.
 
 Finally, you could use a 3D printer to make a nose cone with just the
 characteristics you want.
+
 
 ### Fins
 
@@ -139,6 +143,7 @@ using the coupler.  The cavity in between the payload compartment and the engine
 
 (pic of assembled rocket)
 
+
 ### Parachute
 
 This may just be the most important part of the rocket.  Well, at least if you want to launch it more than once.  Parachutes
@@ -150,6 +155,5 @@ the [radial deploy system](http://www.uswaterrockets.com/construction_&_tutorial
 US Water Rockets.  This ingenious system works really well and is quite simple to build.
 
 (pic of parachute)
-
 
 
