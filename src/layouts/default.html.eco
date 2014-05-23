@@ -35,7 +35,7 @@
     </div>
 
     <script>
-        new NodeRocketLogo('#logo', 120, 'dark');
+        new NodeRocketLogo('#logo', 120, 'dark_b');
     </script>
   </body>
 </html>
