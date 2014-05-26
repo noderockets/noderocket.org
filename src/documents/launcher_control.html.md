@@ -105,6 +105,43 @@ And here is a real life version:
 
 ![completed circuit](images/launcher_control_board.png)
 
+### Using a Spark Core
+
+<img src="images/spark.jpg" alt="Spark Core" style="width: 500px;"/>
+
+The [Spark Core](https://www.spark.io/) is a small, Arduino compatible board with Wifi built in.  It's close to a drop in replacement for the Arduino in our control system circuit, with a couple key differences:
+
+- The Spark Core is a 3.3V system, not a 5V system.
+- The data connection is WiFi, not USB.
+
+** Dealing with 3.3V **
+
+Our circuit is expecting 5V - that's what works best with our transistors.  The Spark Core is powered by USB, which is 5V.  The Vin pin outputs 5V.
+
+The analog pins can't handle 5V, only 3.3V.  That means we need to make sure our pressure sensor never gives the analog pin more than 3.3V.  There are two ways to do this:
+
+- Use a 3.3V pin as the power supply to the voltage divider (only the voltage divider).
+- Power the voltage divider from 5V, but make sure max that can reach the analog pin is 3.3V or under.
+
+I'm using the first solution, which is easy to adjust for in the software.
+
+Here's the circuit with a spark device:
+
+<img src="images/spark_circuit.jpg" alt="Spark Core Circuit" style="width: 500px;"/>
+
+** Connecting without USB **
+
+This is mostly handled with a software change.  The noderocket-launcher project includes a "spark" branch that has the updates needed to connect to a spark device.  Here's what you need to do:
+
+- Register your spark device at [https://www.spark.io](https://www.spark.io).
+- Prepare the spark device following the instructions for [the spark-io project](https://github.com/rwaldron/spark-io/).
+- Clone the [noderocket-launcher project](https://github.com/noderockets/noderocket-launcher) and switch to the spark branch.
+- Find your Spark Access Token at [https://www.spark.io/build](https://www.spark.io/build) under the Settings section.
+- Find your spark device's Device ID at [https://www.spark.io/build](https://www.spark.io/build) under the Cores section.
+- Start the launcher server using:
+
+        node server.js --token <your token> --deviceId <your device id>
+
 ### Building the Valve Assembly
 
 We need the valves and pressure sensor connected such that:
