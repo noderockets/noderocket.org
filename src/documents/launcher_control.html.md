@@ -93,6 +93,11 @@ We will create two valve control circuits, and the pressure measurement circuit.
 
 In order to make it easy to connect to the valves and sensor, we included a CAT6 keystone jack.  The circuit board will be connected to the control assembly (valves and sensor) through a network cable.  This makes it easier to set up and tear down the launcher.
 
+**** WARNINGS ****
+- The direction of the diodes matters.  If you put them in backwards you are short circuiting your transistors.
+- Don't plug the 15 V into the Arduino power jack.  It fits, but it's way too much power.  You could damage the Arduino.
+- Different transistors may use different pins than the ones in the diagrams/pictures.  If you aren't using the same parts listed above, make sure the pins match for base, collector, and emitter (or gate, source, and drain).  If they don't match, adjust your wiring accordingly.
+
 Put all together, it should look like this:
 
 [![project circuit layout](images/launcher_circuit_small.png)](images/noderocket-launcher_electronics_bb.png)
@@ -103,7 +108,8 @@ Put all together, it should look like this:
 
 And here is a real life version:
 
-![completed circuit](images/launcher_control_board.png)
+<img src="images/launcher_control_board.jpg" alt="Spark Core" style="width: 500px;"/>
+[Larger Version](images/launcher_control_board.jpg)
 
 ### Using a Spark Core
 
