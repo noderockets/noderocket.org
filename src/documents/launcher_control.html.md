@@ -68,11 +68,11 @@ The air valves operate at 12 V and draw about 1 A when first opened, dropping to
 
 We're going to use transistors to do the switching for us.  Since we want the valves to be connected to ground and switch on power, we will need to use [P channel transistors](http://en.wikipedia.org/wiki/PNP_transistor#PNP) as the switch to the valve.  Since the valve has a relatively high power consumption, we'll need to use high powered transistors, like [MOSFETs](http://en.wikipedia.org/wiki/Mosfet).
 
-The Arduino digital output pin effectively has three states: low (0 V), high (5 V), and high impedence (no value, like during startup).  In order to make sure the valve stays closed unless switched on we want a small NPN transistor between the Arduino and the MOSFET.  This transistor will make sure that if the Arduino gives a weak or indeterminate value on the pin, the MOSFET still gets a strong "off" signal.  We'll be using this circuit (image courtesy of a [relevant Arduino forum discussion](http://forum.arduino.cc/index.php?PHPSESSID=mvalfhc1ttbt3hmjbgjpbk4m30&topic=130384.15)):
+The Arduino digital output pin effectively has three states: low (0 V), high (5 V), and high impedence (no value, like during startup).  In order to make sure the valve stays closed unless switched on we want a small NPN transistor between the Arduino and the MOSFET.  This transistor will make sure that if the Arduino gives a weak or indeterminate value on the pin, the MOSFET still gets a strong "off" signal.  We'll be using this circuit:
 
-![P channel MOSFET switch circuit](images/PFetSwitch.png)
+<a href="images/launcher_valve_schematic.png"><img src="images/launcher_valve_schematic.png" alt="Valve Schematic" style="width: 500px;"/></a>
 
-Our V<sub>CC</sub> will be a 12 V (or maybe more) power source and our LOAD is the air valve.  There is what's called a "pull down" resistor on the NPN transistor that makes sure that if the Arduino IO isn't giving a strong value, the NPN input is tied to ground, which turns off an NPN transistor.  The P MOSFET has a "pull up" resistor, which does the same thing if the NPN transistor is giving a weak output.  A P channel transistor is off if its input is high.
+Our LOAD is the air valve.  There is what's called a "pull down" resistor on the NPN transistor that makes sure that if the Arduino IO isn't giving a strong value, the NPN input is tied to ground, which turns off an NPN transistor.  The P MOSFET has a "pull up" resistor, which does the same thing if the NPN transistor is giving a weak output.  A P channel transistor is off if its input is high.
 
 Since our LOAD is a solenoid, which is a type of inductor coil, it will discharge current in a backwards direction when it's turned off.  In order to protect the transistors we will include a diode across the load.  A diode allows current to flow in only one direction.  We will point the diode so that when the transistor turns the valve on, no current will flow through it, but any current created by the valve when it turns off will flow through the diode, protecting the transistor.
 
@@ -81,15 +81,20 @@ Since our LOAD is a solenoid, which is a type of inductor coil, it will discharg
 ** Parts List **
 
 We will create two valve control circuits, and the pressure measurement circuit.  We'll need the following parts:
-- An Arduino (Uno)
-- A breadboard
-- 6 10k Ω resistors
-- 2 NPN transistors (5 V input)
-- 2 P channel MOSFETs (5 V input)
-- 2 diodes
-- 1 270 Ω resistor
-- plenty of wires
-- a CAT6 keystone jack
+- [An Arduino Kit (Uno)](http://www.amazon.com/Starter-Kit-Newsite-Uno-Breadboard/dp/B0051QHPJM/ref=sr_1_cc_1?s=aps&ie=UTF8&qid=1397853336&sr=1-1-catcorr&keywords=arduino+holder)
+   - Arduino Uno
+   - USB cable
+   - Breadboard
+   - plenty of jumper wires
+- [6 10k Ω resistors](https://www.sparkfun.com/products/11508)
+- [1 270 Ω resistor](https://www.sparkfun.com/products/11507)
+- [2 NPN transistors (5 V input)](https://www.sparkfun.com/products/12852)
+- [2 P channel MOSFETs (5 V input)](https://www.sparkfun.com/products/10349)
+- [2 diodes](https://www.sparkfun.com/products/8589)
+- [1 DC barrel jack adapter](https://www.sparkfun.com/products/10811)
+- [1 15V (or so) power supply](http://www.amazon.com/gp/product/B0027C16H0/ref=oh_details_o01_s00_i00?ie=UTF8&psc=1)
+- [1 CAT6 keystone jack](http://www.monoprice.com/Product?c_id=105&cp_id=10513&cs_id=1051303&p_id=5622&seq=1&format=2)
+- about 6 inches of CAT5 or CAT6 cable, preferably solid core (bulk cable is usually solid, patch cables are usually stranded - solid plugs into a breadboard more easily)
 
 In order to make it easy to connect to the valves and sensor, we included a CAT6 keystone jack.  The circuit board will be connected to the control assembly (valves and sensor) through a network cable.  This makes it easier to set up and tear down the launcher.
 
@@ -108,7 +113,7 @@ Put all together, it should look like this:
 
 And here is a real life version:
 
-<img src="images/launcher_control_board.jpg" alt="Spark Core" style="width: 500px;"/>
+<a href="images/launcher_control_board.jpg"><img src="images/launcher_control_board.jpg" alt="Spark Core" style="width: 500px;"/></a>
 [Larger Version](images/launcher_control_board.jpg)
 
 ### Using a Spark Core
@@ -161,19 +166,23 @@ We need the valves and pressure sensor connected such that:
 ** Parts List **
 
 We'll need the following parts:
-- 2 12 V air valves
-- 1 oil pressure sensor
-- 2 male quick connect to 1/4 NPT male
-- 1 1/8 NPT female to 1/4 NPT male adapter
-- 1 1/4 NPT tee (with any necessary adapters to make it 1/4 NPT male on both straights and female on the tee)
-- 1 1/4 NPT tee (with any necessary adapters to make it 1/4 NPT male on the tee and one straight and female on the other straight)
-- 2 female quick connect to 1/4 NPT female
-- 1 pneumatic cylinder
-- 1-2 foot hose 1/4 NPT male on both ends to connect valve to cylinder
-- assorted wire connectors
-- a screw to connect the sensor ground to a valve body
-- pipe thread tape
-- a CAT6 keystone jack
+- [2 12 V air valves](http://www.amazon.com/Electric-Solenoid-Replacement-Pipelines-Applications/dp/B00827FP26/ref=sr_1_sc_2?ie=UTF8&qid=1395697129&sr=8-2-spell)
+- [1 oil pressure sensor](http://www.amazon.com/gp/product/B00029JXMA/ref=oh_details_o00_s00_i00?ie=UTF8&psc=1)
+   - 1 1/8 NPT female to 1/4 NPT male adapter (comes with the pressure sensor linked)
+- [2 Quick connect starter sets](http://www.harborfreight.com/piece-brass-industrialmilton-uick-connect-starter-set-68237.html)
+   - 2 Female quick connect to 1/4 NPT female
+   - 2 Male quick connect to 1/4 NPT male
+- [2 1/4 NPT tees](http://www.harborfreight.com/14-female-brass-t-connector-68197.html)
+- [1 1/4 NPT female coupling](http://www.harborfreight.com/14-x-14-Female-Brass-Pipe-Coupling-68200.html)
+- [3 1/4 NPT male coupling](http://www.harborfreight.com/14-in-x-14-in-male-brass-pipe-coupling-68198.html)
+- [1 1/8 NPT male to 1/4 NPT female coupling](http://www.amazon.com/dp/B000BOAA6O/ref=biss_dp_t_asn)
+- [1 pneumatic cylinder](http://www.amazon.com/gp/product/B005JGR0GM/ref=oh_details_o00_s00_i00?ie=UTF8&psc=1)
+- [1-2 foot hose 1/4 NPT male on both ends to connect valve to cylinder](http://www.amazon.com/K-Tool-International-KTI72000-Rubber-Whip/dp/B00BEEF52E/ref=sr_1_2?s=hi&ie=UTF8&qid=1397851143&sr=1-2)
+- [Electrical tape](http://www.harborfreight.com/60-ft-x-34-in-industrial-grade-electrical-tape-69570.html)
+- [M5 screw to connect the sensor ground to a valve body](http://www.amazon.com/Machine-Plated-Phillips-Threaded-Imported/dp/B00F32EKMO/ref=sr_1_1?ie=UTF8&qid=1401656736&sr=8-1&keywords=m5+screw+10mm)
+- [pipe thread tape](http://www.harborfreight.com/1-2-half-inch-x-260-inch-plumbers-thread-seal-tape-39625.html)
+- [1 CAT6 keystone jack](http://www.monoprice.com/Product?c_id=105&cp_id=10513&cs_id=1051303&p_id=5622&seq=1&format=2)
+- about 6 inches of CAT5 or CAT6 cable, preferably solid core (bulk cable is usually solid, patch cables are usually stranded - solid plugs into a breadboard more easily)
 
 ![launcher control parts](images/launcher_control_parts.png)
 
