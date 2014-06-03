@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html>
+  <head>
+      <title>Node Rockets Launcher Software</title>
+      <link rel="stylesheet" media="screen" href="styles/default.css">
+      <link rel="stylesheet" media="screen" href="styles/color.css">
+      <link rel="stylesheet" media="screen" href="styles/highlight_github.css">
+      <script src="http://d3js.org/d3.v3.min.js"></script>
+      <script src="/scripts/logo.js"></script>
+
+      <!-- livereload -->
+      
+</head>
+  <body>
+    <div id="header">
+      <p class="organizers">
+        Brought to you by the
+        <a href="https://twitter.com/noderockets/following">@noderockets</a> core <a href="/core">team</a>
+      </p>
+      <a href="/">
+        <span class="logo">node<span id="logo"></span>rockets</span>
+      </a>
+      <div class="header-links-wrap" style="position: absolute; top: 170px;">
+        <ul class="header-links">
+          <li><a href="/">Home</a></li>
+          <li><a href="/hack.html">Hack</a></li>
+          <li><a href="/organize.html">Organize</a></li>
+          <li><a href="/impressions.html">Impressions</a></li>
+        </ul>
+      </div>
+    </div>
+
+    <div id="content">
+    <h1 id="launcher-software">Launcher Software</h1>
+<h2 id="goals">Goals</h2>
+<p>The goals for the launcher software match those of the launcher control system:</p>
+<ol>
+<li>Measure the air pressure inside the rocket.</li>
+<li>Pressurize the rocket automatically.</li>
+<li>Launch the rocket automatically.</li>
+</ol>
+<h2 id="plans">Plans</h2>
+<p>Since this is noderockets, we&#39;re going to use node.js as our software platform.  We&#39;re going to use johnny-five to connect to our arduino, read the inputs, and write the outputs.  We&#39;re going to create a webpage for a UI, that will get data streaming from the server using websockets.  We want the UI to do the following:</p>
+<ul>
+<li>Tell us the current pressure in the rocket.</li>
+<li>Tell us the current state of the valves.</li>
+<li>Allow us to open the fill valve to raise the pressure in the rocket.</li>
+<li>Allow us to close the fill valve.</li>
+<li>Allow us to open the launch valve to launch the rocket.</li>
+<li>Allow us to close the launch valve.</li>
+<li>Allow us to reset the launcher, which will close all of the valves.</li>
+</ul>
+<h2 id="the-software">The Software</h2>
+<p>The software can be found at <a href="https://github.com/noderockets/noderocket-launcher">https://github.com/noderockets/noderocket-launcher</a>.  The master branch contains the basic launcher code.  The project page lists prerequisites and instructions for running the project.  The code contains extensive comments to explain how it all works.  In order to avoid out of date instructions, all further information about the launcher software can be found in the github project.</p>
+
+    </div>
+
+    <script>
+        new NodeRocketLogo('#logo', 120, 'dark_b');
+    </script>
+  </body>
+</html>

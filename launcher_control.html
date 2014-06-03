@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html>
+  <head>
+      <title>Node Rockets Launcher Control System</title>
+      <link rel="stylesheet" media="screen" href="styles/default.css">
+      <link rel="stylesheet" media="screen" href="styles/color.css">
+      <link rel="stylesheet" media="screen" href="styles/highlight_github.css">
+      <script src="http://d3js.org/d3.v3.min.js"></script>
+      <script src="/scripts/logo.js"></script>
+
+      <!-- livereload -->
+      
+</head>
+  <body>
+    <div id="header">
+      <p class="organizers">
+        Brought to you by the
+        <a href="https://twitter.com/noderockets/following">@noderockets</a> core <a href="/core">team</a>
+      </p>
+      <a href="/">
+        <span class="logo">node<span id="logo"></span>rockets</span>
+      </a>
+      <div class="header-links-wrap" style="position: absolute; top: 170px;">
+        <ul class="header-links">
+          <li><a href="/">Home</a></li>
+          <li><a href="/hack.html">Hack</a></li>
+          <li><a href="/organize.html">Organize</a></li>
+          <li><a href="/impressions.html">Impressions</a></li>
+        </ul>
+      </div>
+    </div>
+
+    <div id="content">
+    <h1 id="launcher-control-system">Launcher Control System</h1>
+<h2 id="goals">Goals</h2>
+<p>The goals for the launcher control system are so far pretty simple:</p>
+<ol>
+<li>Measure the air pressure inside the rocket.</li>
+<li>Pressurize the rocket automatically.</li>
+<li>Launch the rocket automatically.</li>
+</ol>
+<h2 id="plans">Plans</h2>
+<p>This is noderocket, so we know we&#39;re going to use nodejs.  For the launcher, we decided to use an Arduino based platform running johnny-five for the interface to the hardware.  Arduino gives us a series of analog and digital input/output pins which we can use to measure or to turn things on and off.</p>
+<h3 id="measuring-air-pressure">Measuring Air Pressure</h3>
+<p>We spent some time looking for an inexpensive, easy to find, pressure sensor that can measure up to about 100 PSI.  We found a great fit in the oil pressure sensors in our cars:</p>
+<p><img src="images/oilpresssender.jpg" alt="oil pressure sensor"></p>
+<p>An oil pressure sensor varies its electrical resistance in response to the amount of pressure pushing against the sensor.  If we can measure the resistance of the pressure sensor we can calculate the pressure pushing against it.  In electronics, the way to measure an unknown resistance is to use a <a href="http://en.wikipedia.org/wiki/Voltage_divider">voltage divider circuit</a>.</p>
+<p><img src="images/Impedance_Voltage_divider.png" alt="voltage divider circuit"></p>
+<p>In this case, we will use a known V<sub>in</sub> and Z<sub>1</sub>, we will measure V<sub>out</sub> by connecting it to an analog pin on the Arduino, and we can then calculate Z<sub>2</sub> using the following equation:</p>
+<p><img src="images/voltage_divider_equation.gif" alt="voltage divider equation"></p>
+<p>Our V<sub>in</sub> will be the +5 V from the Arduino.  We need to pick a reasonable Z<sub>1</sub>.  The resistance of the pressure sensor ranges from close to nothing to between 150 and 200 Ω.  So we have to balance two needs:</p>
+<ol>
+<li>We want to minimize the current we consume (<a href="http://en.wikipedia.org/wiki/Ohms_law">Ohm&#39;s Law</a>: I = V/R), which means we want a high Z<sub>1</sub>.</li>
+<li>We want to maximize the voltage change as the sensor resistance changes, which means we want a low Z<sub>1</sub>.</li>
+</ol>
+<p>The larger we make Z<sub>1</sub>, the less of a voltage change we get from a change in resistance on the sensor.  The Arduino reads voltage from 0 to 5 V as digital values 0 to 1023, where 0 is 0 V and 1023 is 5 V.  This mean that the Arduino reads in increments of 0.00488 V.  A Z<sub>1</sub> of around 300 Ω will give us a voltage range of 0 V to 2 V, assuming the sensor is 0 Ω at 0 PSI and 200 Ω at 100 PSI.  This means we will read pressure in increments of about 0.244 PSI, which is good enough for our rocket launcher.  The maximum current we will consume is 16 mA, which isn&#39;t great, but we can live with it.</p>
+<p><strong> Calculating Pressure From Resistance </strong></p>
+<p>The pressure sensor resistance changes close enough to linearly that we&#39;re going to use a simple <a href="http://en.wikipedia.org/wiki/Linear_equation">linear equation</a> to determine the pressure from the resistance.  We have to determine the parameters of that equation experimentally.  Using a digital multimeter we measure the resistance of the sensor at two known pressures, then we determine the slope and y-intercept from those numbers. When I measured the resistance of my sensor I got the following readings:</p>
+<ul>
+<li>At 10 PSI resistance was 22.31648 Ω.</li>
+<li>At 80 PSI resistance was 150.077 Ω</li>
+</ul>
+<p>Using amazing algebra skills, we get an equation that looks like this:</p>
+<blockquote>
+<p>psi = (Z<sub>2</sub> * 0.5479) - 2.2272;</p>
+</blockquote>
+<h3 id="pressurizing-and-launching">Pressurizing and Launching</h3>
+<p>Pressurizing the rocket is just a matter of opening a valve to let pressurized air into the rocket, then closing it again.</p>
+<p><img src="images/air_valve.png" alt="air valve"></p>
+<p>We considered several options for triggering the rocket launch.  Our current solution uses a pneumatic cylinder to move a piece of material holding the rocket to the launcher.  The pneumatic cylinder is powered by air pressure, which is controlled by a valve.  So our control circuit for launching the rocket will be the same as the control circuit for pressurizing the rocket.</p>
+<p><img src="images/air_cylinder.png" alt="air cylinder"></p>
+<p><strong> Controlling the Valves </strong></p>
+<p>The air valves operate at 12 V and draw about 1 A when first opened, dropping to a sustained 500 mA or so for as long as they stay open.  This is a lot more power than the Arduino can provide.  The oil pressure sensor, since it comes from a car, expects to operate in a common ground environment.  This means that all of our components should normally be connected to ground, and the valves should be switched on by switching operating voltage of 12 V to them.</p>
+<p>We&#39;re going to use transistors to do the switching for us.  Since we want the valves to be connected to ground and switch on power, we will need to use <a href="http://en.wikipedia.org/wiki/PNP_transistor#PNP">P channel transistors</a> as the switch to the valve.  Since the valve has a relatively high power consumption, we&#39;ll need to use high powered transistors, like <a href="http://en.wikipedia.org/wiki/Mosfet">MOSFETs</a>.</p>
+<p>The Arduino digital output pin effectively has three states: low (0 V), high (5 V), and high impedence (no value, like during startup).  In order to make sure the valve stays closed unless switched on we want a small NPN transistor between the Arduino and the MOSFET.  This transistor will make sure that if the Arduino gives a weak or indeterminate value on the pin, the MOSFET still gets a strong &quot;off&quot; signal.  We&#39;ll be using this circuit:</p>
+<p><a href="images/launcher_valve_schematic.png"><img src="images/launcher_valve_schematic.png" alt="Valve Schematic" style="width: 500px;"/></a></p>
+<p>Our LOAD is the air valve.  There is what&#39;s called a &quot;pull down&quot; resistor on the NPN transistor that makes sure that if the Arduino IO isn&#39;t giving a strong value, the NPN input is tied to ground, which turns off an NPN transistor.  The P MOSFET has a &quot;pull up&quot; resistor, which does the same thing if the NPN transistor is giving a weak output.  A P channel transistor is off if its input is high.</p>
+<p>Since our LOAD is a solenoid, which is a type of inductor coil, it will discharge current in a backwards direction when it&#39;s turned off.  In order to protect the transistors we will include a diode across the load.  A diode allows current to flow in only one direction.  We will point the diode so that when the transistor turns the valve on, no current will flow through it, but any current created by the valve when it turns off will flow through the diode, protecting the transistor.</p>
+<h3 id="building-the-circuits">Building the Circuits</h3>
+<p><strong> Parts List </strong></p>
+<p>We will create two valve control circuits, and the pressure measurement circuit.  We&#39;ll need the following parts:</p>
+<ul>
+<li><a href="http://www.amazon.com/Starter-Kit-Newsite-Uno-Breadboard/dp/B0051QHPJM/ref=sr_1_cc_1?s=aps&amp;ie=UTF8&amp;qid=1397853336&amp;sr=1-1-catcorr&amp;keywords=arduino+holder">An Arduino Kit (Uno)</a><ul>
+<li>Arduino Uno</li>
+<li>USB cable</li>
+<li>Breadboard</li>
+<li>plenty of jumper wires</li>
+</ul>
+</li>
+<li><a href="https://www.sparkfun.com/products/11508">6 10k Ω resistors</a></li>
+<li><a href="https://www.sparkfun.com/products/11507">1 270 Ω resistor</a></li>
+<li><a href="https://www.sparkfun.com/products/12852">2 NPN transistors (5 V input)</a></li>
+<li><a href="https://www.sparkfun.com/products/10349">2 P channel MOSFETs (5 V input)</a></li>
+<li><a href="https://www.sparkfun.com/products/8589">2 diodes</a></li>
+<li><a href="https://www.sparkfun.com/products/10811">1 DC barrel jack adapter</a></li>
+<li><a href="http://www.amazon.com/gp/product/B0027C16H0/ref=oh_details_o01_s00_i00?ie=UTF8&amp;psc=1">1 15V (or so) power supply</a></li>
+<li><a href="http://www.monoprice.com/Product?c_id=105&amp;cp_id=10513&amp;cs_id=1051303&amp;p_id=5622&amp;seq=1&amp;format=2">1 CAT6 keystone jack</a></li>
+<li>about 6 inches of CAT5 or CAT6 cable, preferably solid core (bulk cable is usually solid, patch cables are usually stranded - solid plugs into a breadboard more easily)</li>
+</ul>
+<p>In order to make it easy to connect to the valves and sensor, we included a CAT6 keystone jack.  The circuit board will be connected to the control assembly (valves and sensor) through a network cable.  This makes it easier to set up and tear down the launcher.</p>
+<p><strong><strong> WARNINGS </strong></strong></p>
+<ul>
+<li>The direction of the diodes matters.  If you put them in backwards you are short circuiting your transistors.</li>
+<li>Don&#39;t plug the 15 V into the Arduino power jack.  It fits, but it&#39;s way too much power.  You could damage the Arduino.</li>
+<li>Different transistors may use different pins than the ones in the diagrams/pictures.  If you aren&#39;t using the same parts listed above, make sure the pins match for base, collector, and emitter (or gate, source, and drain).  If they don&#39;t match, adjust your wiring accordingly.</li>
+</ul>
+<p>Put all together, it should look like this:</p>
+<p><a href="images/noderocket-launcher_electronics_bb.png"><img src="images/launcher_circuit_small.png" alt="project circuit layout"></a></p>
+<p><a href="images/noderocket-launcher_electronics_bb.png">Larger Version</a></p>
+<p><a href="images/noderocket-launcher_electronics.fzz">Fritzing File</a></p>
+<p>And here is a real life version:</p>
+<p><a href="images/launcher_control_board.jpg"><img src="images/launcher_control_board.jpg" alt="Spark Core" style="width: 500px;"/></a>
+<a href="images/launcher_control_board.jpg">Larger Version</a></p>
+<h3 id="using-a-spark-core">Using a Spark Core</h3>
+<p><img src="images/spark.jpg" alt="Spark Core" style="width: 500px;"/></p>
+<p>The <a href="https://www.spark.io/">Spark Core</a> is a small, Arduino compatible board with Wifi built in.  It&#39;s close to a drop in replacement for the Arduino in our control system circuit, with a couple key differences:</p>
+<ul>
+<li>The Spark Core is a 3.3V system, not a 5V system.</li>
+<li>The data connection is WiFi, not USB.</li>
+</ul>
+<p><strong> Dealing with 3.3V </strong></p>
+<p>Our circuit is expecting 5V - that&#39;s what works best with our transistors.  The Spark Core is powered by USB, which is 5V.  The Vin pin outputs 5V.</p>
+<p>The analog pins can&#39;t handle 5V, only 3.3V.  That means we need to make sure our pressure sensor never gives the analog pin more than 3.3V.  There are two ways to do this:</p>
+<ul>
+<li>Use a 3.3V pin as the power supply to the voltage divider (only the voltage divider).</li>
+<li>Power the voltage divider from 5V, but make sure max that can reach the analog pin is 3.3V or under.</li>
+</ul>
+<p>I&#39;m using the first solution, which is easy to adjust for in the software.</p>
+<p>Here&#39;s the circuit with a spark device:</p>
+<p><img src="images/spark_circuit.jpg" alt="Spark Core Circuit" style="width: 500px;"/></p>
+<p><strong> Connecting without USB </strong></p>
+<p>This is mostly handled with a software change.  The noderocket-launcher project includes a &quot;spark&quot; branch that has the updates needed to connect to a spark device.  Here&#39;s what you need to do:</p>
+<ul>
+<li>Register your spark device at <a href="https://www.spark.io">https://www.spark.io</a>.</li>
+<li>Prepare the spark device following the instructions for <a href="https://github.com/rwaldron/spark-io/">the spark-io project</a>.</li>
+<li>Clone the <a href="https://github.com/noderockets/noderocket-launcher">noderocket-launcher project</a> and switch to the spark branch.</li>
+<li>Find your Spark Access Token at <a href="https://www.spark.io/build">https://www.spark.io/build</a> under the Settings section.</li>
+<li>Find your spark device&#39;s Device ID at <a href="https://www.spark.io/build">https://www.spark.io/build</a> under the Cores section.</li>
+<li><p>Start the launcher server using:</p>
+<pre class="highlight"><code class="hljs brainfuck">  <span class="hljs-comment">node</span> <span class="hljs-comment">server</span><span class="hljs-string">.</span><span class="hljs-comment">js</span> <span class="hljs-literal">-</span><span class="hljs-literal">-</span><span class="hljs-comment">token</span> &lt;<span class="hljs-comment">your</span> <span class="hljs-comment">token</span>&gt; <span class="hljs-literal">-</span><span class="hljs-literal">-</span><span class="hljs-comment">deviceId</span> &lt;<span class="hljs-comment">your</span> <span class="hljs-comment">device</span> <span class="hljs-comment">id</span>&gt;
+</code></pre></li>
+</ul>
+<h3 id="building-the-valve-assembly">Building the Valve Assembly</h3>
+<p>We need the valves and pressure sensor connected such that:</p>
+<ol>
+<li>We can connect an air pressure source.</li>
+<li>We can connect a rocket launch platform.</li>
+<li>The fill valve controls air into the rocket.</li>
+<li>The pressure sensor senses the air pressure of the rocket.</li>
+<li>The launch valve has pressure when the rocket is ready to launch.</li>
+<li>The launch valve loses pressure when the rocket is launched.</li>
+</ol>
+<p><strong> Parts List </strong></p>
+<p>We&#39;ll need the following parts:</p>
+<ul>
+<li><a href="http://www.amazon.com/Electric-Solenoid-Replacement-Pipelines-Applications/dp/B00827FP26/ref=sr_1_sc_2?ie=UTF8&amp;qid=1395697129&amp;sr=8-2-spell">2 12 V air valves</a></li>
+<li><a href="http://www.amazon.com/gp/product/B00029JXMA/ref=oh_details_o00_s00_i00?ie=UTF8&amp;psc=1">1 oil pressure sensor</a><ul>
+<li>1 1/8 NPT female to 1/4 NPT male adapter (comes with the pressure sensor linked)</li>
+</ul>
+</li>
+<li><a href="http://www.harborfreight.com/piece-brass-industrialmilton-uick-connect-starter-set-68237.html">2 Quick connect starter sets</a><ul>
+<li>2 Female quick connect to 1/4 NPT female</li>
+<li>2 Male quick connect to 1/4 NPT male</li>
+</ul>
+</li>
+<li><a href="http://www.harborfreight.com/14-female-brass-t-connector-68197.html">2 1/4 NPT tees</a></li>
+<li><a href="http://www.harborfreight.com/14-x-14-Female-Brass-Pipe-Coupling-68200.html">1 1/4 NPT female coupling</a></li>
+<li><a href="http://www.harborfreight.com/14-in-x-14-in-male-brass-pipe-coupling-68198.html">3 1/4 NPT male coupling</a></li>
+<li><a href="http://www.amazon.com/dp/B000BOAA6O/ref=biss_dp_t_asn">1 1/8 NPT male to 1/4 NPT female coupling</a></li>
+<li><a href="http://www.amazon.com/gp/product/B005JGR0GM/ref=oh_details_o00_s00_i00?ie=UTF8&amp;psc=1">1 pneumatic cylinder</a></li>
+<li><a href="http://www.amazon.com/K-Tool-International-KTI72000-Rubber-Whip/dp/B00BEEF52E/ref=sr_1_2?s=hi&amp;ie=UTF8&amp;qid=1397851143&amp;sr=1-2">1-2 foot hose 1/4 NPT male on both ends to connect valve to cylinder</a></li>
+<li><a href="http://www.harborfreight.com/60-ft-x-34-in-industrial-grade-electrical-tape-69570.html">Electrical tape</a></li>
+<li><a href="http://www.amazon.com/Machine-Plated-Phillips-Threaded-Imported/dp/B00F32EKMO/ref=sr_1_1?ie=UTF8&amp;qid=1401656736&amp;sr=8-1&amp;keywords=m5+screw+10mm">M5 screw to connect the sensor ground to a valve body</a></li>
+<li><a href="http://www.harborfreight.com/1-2-half-inch-x-260-inch-plumbers-thread-seal-tape-39625.html">pipe thread tape</a></li>
+<li><a href="http://www.monoprice.com/Product?c_id=105&amp;cp_id=10513&amp;cs_id=1051303&amp;p_id=5622&amp;seq=1&amp;format=2">1 CAT6 keystone jack</a></li>
+<li>about 6 inches of CAT5 or CAT6 cable, preferably solid core (bulk cable is usually solid, patch cables are usually stranded - solid plugs into a breadboard more easily)</li>
+</ul>
+<p><img src="images/launcher_control_parts.png" alt="launcher control parts"></p>
+<p>Assemble them as shown in the picture - make sure to apply tape to the threads of each male piece before assembling.  Tighten the connections.  It should look like this when assembled:</p>
+<p><img src="images/launcher_control_assembly.png" alt="launcher control assembly"></p>
+<p>The pneumatic cylinder isn&#39;t pictured as it&#39;s bolted on to the launch platform.  It has a male quick connect and the hose connecting it to the valve has a female quick connect so that the control assembly is removed from the launch platform via two quick connects - one to the rocket fill and the other to the pneumatic cylinder.</p>
+<p>And both sides assembled with CAT6 keystone jacks - a network cable completes the connection between the two:</p>
+<p><img src="images/launcher_control_cat6.png" alt="launcher control and circuit"></p>
+
+    </div>
+
+    <script>
+        new NodeRocketLogo('#logo', 120, 'dark_b');
+    </script>
+  </body>
+</html>

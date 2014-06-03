@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html>
+  <head>
+      <title>Node Rockets Rocket Control System</title>
+      <link rel="stylesheet" media="screen" href="styles/default.css">
+      <link rel="stylesheet" media="screen" href="styles/color.css">
+      <link rel="stylesheet" media="screen" href="styles/highlight_github.css">
+      <script src="http://d3js.org/d3.v3.min.js"></script>
+      <script src="/scripts/logo.js"></script>
+
+      <!-- livereload -->
+      
+</head>
+  <body>
+    <div id="header">
+      <p class="organizers">
+        Brought to you by the
+        <a href="https://twitter.com/noderockets/following">@noderockets</a> core <a href="/core">team</a>
+      </p>
+      <a href="/">
+        <span class="logo">node<span id="logo"></span>rockets</span>
+      </a>
+      <div class="header-links-wrap" style="position: absolute; top: 170px;">
+        <ul class="header-links">
+          <li><a href="/">Home</a></li>
+          <li><a href="/hack.html">Hack</a></li>
+          <li><a href="/organize.html">Organize</a></li>
+          <li><a href="/impressions.html">Impressions</a></li>
+        </ul>
+      </div>
+    </div>
+
+    <div id="content">
+    <h1 id="rocket-control-system">Rocket Control System</h1>
+<h2 id="goals">Goals</h2>
+<p>The goals for the rocket control system are to:</p>
+<ol>
+<li>Measure the altitude of the rocket.</li>
+<li>Release a parachute.</li>
+</ol>
+<h2 id="plans">Plans</h2>
+<p>We&#39;re going to use a <a href="http://www.adafruit.com/products/1603">BMP-180 module</a> to measure the altitude.  It&#39;s a barometric pressure sensor and altimeter.  The parachute will be released by turning a small servo motor.  Each of these components will be wired up to the Raspberry Pi&#39;s GPIO pins.</p>
+<h2 id="gpio-pins">GPIO Pins</h2>
+<p><img src="images/GPIOs.png" alt="Raspberry Pi GPIO Pins"></p>
+<p>The raspberry pi GPIO pins are laid out as shown above.  Numbering can be confusing, because it seems like different documents number the pins in different ways.  This diagram labels the entire GPIO header as P1, and numbers the pins on the left with odd numbers 1-25 and the pins on the right with even numbers 2-26.</p>
+<h2 id="altimeter">Altimeter</h2>
+<p><img src="images/bmp180.jpg" alt="BMP-180" style="width: 400px;"/></p>
+<p>The BMP-180 uses <a href="http://en.wikipedia.org/wiki/I%C2%B2C">the I2C protocol</a>.  This protocol requires 4 connections: VIN (power), GND (ground), SCL (clock), and SDA (data).  The BMP-180 pins should be connected to these GPIO pins:</p>
+<table>
+<thead>
+<tr>
+<th style="text-align:center">BMP-180</th>
+<th></th>
+<th style="text-align:center">GPIO</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center">VIN</td>
+<td></td>
+<td style="text-align:center">4</td>
+</tr>
+<tr>
+<td style="text-align:center">GND</td>
+<td></td>
+<td style="text-align:center">6</td>
+</tr>
+<tr>
+<td style="text-align:center">SCL</td>
+<td></td>
+<td style="text-align:center">5</td>
+</tr>
+<tr>
+<td style="text-align:center">SDA</td>
+<td></td>
+<td style="text-align:center">3</td>
+</tr>
+</tbody>
+</table>
+<p>Here&#39;s what it looks like hooked up:</p>
+<p><img src="images/altimeter_pi.jpg" alt="Altimeter hooked up to Pi" style="width: 400px;"/></p>
+<h2 id="servo">Servo</h2>
+<p><img src="images/servo.jpg" alt="Servo"></p>
+<p>Servos have 3 wires: power, ground, and signal.  My servo uses the following color codes:</p>
+<table>
+<thead>
+<tr>
+<th>Wire</th>
+<th></th>
+<th>Color</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Power</td>
+<td></td>
+<td>Red</td>
+</tr>
+<tr>
+<td>Ground</td>
+<td></td>
+<td>Brown</td>
+</tr>
+<tr>
+<td>Signal</td>
+<td></td>
+<td>Orange</td>
+</tr>
+</tbody>
+</table>
+<p>The servo signal needs <a href="http://en.wikipedia.org/wiki/Pulse-width_modulation">pulse width modulation</a> in order to control the servo&#39;s position correctly.  The raspberry pi supports hardware based PWM only on pin number 12, labeled &quot;GPIO 18 (PCM_CLK)&quot; on the diagram, so we&#39;ll use that one for the signal.  It is possible to use other pins using software PWM support.</p>
+<p>The servo wires should be connected to these GPIO pins:</p>
+<table>
+<thead>
+<tr>
+<th>Servo</th>
+<th></th>
+<th>GPIO</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Power</td>
+<td></td>
+<td>2</td>
+</tr>
+<tr>
+<td>Ground</td>
+<td></td>
+<td>14</td>
+</tr>
+<tr>
+<td>Signal</td>
+<td></td>
+<td>12</td>
+</tr>
+</tbody>
+</table>
+<p>Here&#39;s what it looks like hooked up:</p>
+<p><img src="images/servo_pi.jpg" alt="Servo hooked up to Pi" style="width: 400px;"/></p>
+
+    </div>
+
+    <script>
+        new NodeRocketLogo('#logo', 120, 'dark_b');
+    </script>
+  </body>
+</html>
